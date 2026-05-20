@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce System - S2 RPL</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="auth-container" class="auth-wrapper">
+    <div id="login-card" class="auth-card">
+        <h2>Selamat Datang</h2>
+        <p>Silakan masuk untuk mengakses sistem</p>
+        <form id="login-form">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="login-username" required placeholder="Masukkan username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" required placeholder="Masukkan password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+        </form>
+        <p class="auth-footer">Belum punya akun? <a href="#" id="to-register">Daftar Sekarang</a></p>
+    </div>
+
+    <div id="register-card" class="auth-card hidden">
+        <h2>Buat Akun Baru</h2>
+        <p>Daftarkan akun USER atau ADMIN Anda</p>
+        <form id="register-form">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="register-username" required placeholder="Masukkan username baru">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="register-password" required placeholder="Masukkan password">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="register-role" required>
+                    <option value="USER" selected>USER</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Daftar</button>
+        </form>
+        <p class="auth-footer">Sudah punya akun? <a href="#" id="to-login">Log In</a></p>
+    </div>
+</div>
+
+<div id="app-container" class="hidden">
+    <nav class="navbar">
+        <div class="nav-brand"> E Commerce Monolitik</div>
+        <div class="nav-info">
+            <span id="user-display">Halo, <strong id="nav-username">...</strong> (<span id="nav-role">...</span>)</span>
+            <span id="admin-stats" class="admin-only hidden">| 👥 Total User: <strong id="total-users-count">0</strong></span>
+            <button id="btn-logout" class="btn btn-danger btn-sm">Keluar</button>
+        </div>
+    </nav>
+
+    <div class="main-layout">
+
+        <div class="content-section">
+            <div class="section-header">
+                <h2>Katalog Produk</h2>
+                <button id="btn-add-product" class="btn btn-success admin-only hidden">+ Tambah Produk</button>
+            </div>
+
+            <div id="admin-dashboard-summary" class="admin-only hidden" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div style="background: #fff; padding: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #f59e0b; text-align: center;">
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Pending</div>
+                    <div id="stat-pending" style="font-size: 20px; font-weight: bold; color: #1e293b; margin-top: 4px;">0</div>
+                </div>
+                <div style="background: #fff; padding: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #10b981; text-align: center;">
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Paid</div>
+                    <div id="stat-paid" style="font-size: 20px; font-weight: bold; color: #1e293b; margin-top: 4px;">0</div>
+                </div>
+                <div style="background: #fff; padding: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #3b82f6; text-align: center;">
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Shipped</div>
+                    <div id="stat-shipped" style="font-size: 20px; font-weight: bold; color: #1e293b; margin-top: 4px;">0</div>
+                </div>
+                <div style="background: #fff; padding: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #ef4444; text-align: center;">
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Rejected</div>
+                    <div id="stat-rejected" style="font-size: 20px; font-weight: bold; color: #1e293b; margin-top: 4px;">0</div>
+                </div>
+                <div style="background: #eff6ff; padding: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #4f46e5; text-align: center; grid-column: span 2;">
+                    <div style="font-size: 11px; color: #4f46e5; font-weight: bold; text-transform: uppercase;">💰 Uang Masuk (Paid + Shipped)</div>
+                    <div id="stat-revenue" style="font-size: 18px; font-weight: bold; color: #1e293b; margin-top: 4px;">Rp 0</div>
+                </div>
+            </div>
+
+            <div id="product-grid" class="product-grid">
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="cart-box user-only">
+                <h3>🛒 Keranjang Belanja</h3>
+                <div id="cart-items">
+                    <p class="empty-text">Keranjang kosong. Silakan pilih produk.</p>
+                </div>
+                <div class="cart-summary">
+                    <span>Total:</span>
+                    <strong id="cart-total">Rp 0</strong>
+                </div>
+                <button id="btn-checkout" class="btn btn-primary btn-block" disabled>Buat Order & Bayar</button>
+            </div>
+
+            <div class="order-box">
+                <h3>📋 <span id="order-title-role">Riwayat Pesanan</span></h3>
+                <div id="order-list" class="order-list">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="product-modal" class="modal hidden">
+    <div class="modal-content">
+        <span class="modal-close" id="close-modal">&times;</span>
+        <h3 id="modal-title">Form Produk</h3>
+        <form id="product-form">
+            <input type="hidden" id="product-id">
+            <div class="form-group">
+                <label>Nama Produk</label>
+                <input type="text" id="product-name" required placeholder="Contoh: Laptop ASUS">
+            </div>
+            <div class="form-group">
+                <label>Harga (Rp)</label>
+                <input type="number" id="product-price" required min="0" placeholder="Contoh: 15000000">
+            </div>
+            <div class="form-group">
+                <label>Stok Awal</label>
+                <input type="number" id="product-stock" required min="0" placeholder="Contoh: 50">
+            </div>
+            <button type="submit" class="btn btn-success btn-block" id="btn-save-product">Simpan Produk</button>
+        </form>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/product.js"></script>
+<script src="js/order.js"></script>
+</body>
+</html>
